@@ -1,0 +1,6 @@
+# ENV
+- CLOUDFLARE_TOKEN
+- CLOUDFLARE_DOMAIN
+
+# Result
+`name => name.int.{CLOUDFLARE_DOMAIN}`
