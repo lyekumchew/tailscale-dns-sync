@@ -71,6 +71,20 @@ func sync(ctx context.Context) {
 	// name => record id
 	cfMap := map[string]string{}
 	cf := mapset.NewSet[string]()
+	// add self name
+	{
+		name := getName(st.Self.DNSName)
+		if name != "" {
+			ts.Add(name)
+			// now only support ipv4
+			for _, ip := range st.Self.TailscaleIPs {
+				if ip.Is4() {
+					tsMap[name] = ip.String()
+				}
+			}
+		}
+	}
+	// add peer name
 	for _, ps := range st.Peer {
 		name := getName(ps.DNSName)
 		if name != "" {
