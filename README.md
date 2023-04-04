@@ -1,4 +1,6 @@
-# ENV
+# Get Started
+Make sure `tailscale`  is running.
+## ENV
 - CLOUDFLARE_TOKEN
 - CLOUDFLARE_DOMAIN
 
