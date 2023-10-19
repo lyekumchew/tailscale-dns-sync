@@ -14,7 +14,6 @@ import (
 	mapset "github.com/deckarep/golang-set/v2"
 	"golang.org/x/sys/unix"
 	"tailscale.com/client/tailscale"
-	"tailscale.com/ipn/ipnstate"
 )
 
 const (
@@ -26,7 +25,6 @@ const (
 var (
 	ctx    context.Context
 	lc     tailscale.LocalClient
-	st     *ipnstate.Status
 	api    *cloudflare.API
 	zoneID string
 	stop   context.CancelFunc
@@ -37,11 +35,6 @@ func init() {
 	ctx, stop = signal.NotifyContext(context.Background(), unix.SIGTERM, unix.SIGINT)
 
 	var err error
-	// init ts local client
-	st, err = lc.Status(ctx)
-	if err != nil {
-		panic(err)
-	}
 	// init cloudflare client
 	api, err = cloudflare.NewWithAPIToken(os.Getenv("CLOUDFLARE_TOKEN"))
 	if err != nil {
@@ -65,6 +58,11 @@ func getName(name string) string {
 
 func sync(ctx context.Context) {
 	log.Printf("sync start")
+	st, err := lc.Status(ctx)
+	if err != nil {
+		log.Printf("get status error: %+v", err)
+		return
+	}
 	// name => ip string
 	tsMap := map[string]string{}
 	ts := mapset.NewSet[string]()
